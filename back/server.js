@@ -3,8 +3,6 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 
-// import { channels } from "./channels.js";
-
 const channels = [
   {
     idName: "Simple-Dimple",
@@ -45,6 +43,7 @@ io.on("connection", (socket) => {
           c.participants++;
 
           io.emit("channel", c);
+          console.log(c);
         }
       } else {
         let index = c.sockets.indexOf(socket.id);
@@ -56,10 +55,12 @@ io.on("connection", (socket) => {
       }
     });
     return id;
+    console.log(id);
   });
 
   socket.on("sendMessage", (message) => {
     io.emit("message", message);
+    console.log(message);
   });
 
   socket.on("disconnect", () => {
