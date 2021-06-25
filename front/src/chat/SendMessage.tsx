@@ -16,7 +16,6 @@ type Props = {
 
 const SendMessage = ({ channel, onSendMessage }: Props) => {
   const [input, setInput] = useState("");
-  console.log(input);
   console.log("messages", channel?.messages);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {

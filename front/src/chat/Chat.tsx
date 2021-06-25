@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ChannellList from "./ChannellList";
 import SendMessage from "./SendMessage";
 import { io as socket } from "socket.io-client";
@@ -19,12 +19,30 @@ type ChannelType = {
 const Chat = () => {
   const [rooms, setRooms] = useState<ChannelType[]>([]);
   const [channel, setChannel] = useState<ChannelType>();
+  const ref = useRef<MessageType>();
   console.log("Firest", rooms);
+  console.log("REEF", ref.current);
 
   useEffect(() => {
     getRooms();
     configureSockets();
   }, []);
+
+  useEffect(() => {
+    // const message = ref.current;
+
+    const updatedChannels = rooms.map((c) => {
+      if (c.idName !== ref.current?.channel_id) {
+        return c;
+      }
+
+      return {
+        ...c,
+        messages: [...c.messages, ref.current],
+      };
+    });
+    setRooms(updatedChannels);
+  }, [ref]);
   const configureSockets = () => {
     io.on("connection", () => {
       console.log(`I'm connected with the back-end`);
@@ -39,18 +57,19 @@ const Chat = () => {
     });
 
     io.on("message", (message) => {
-      let channels = rooms;
       console.log("message from back", message);
-      channels.forEach((c) => {
-        if (c.idName === message.channel_id) {
-          if (!c.messages) {
-            c.messages = [message];
-          } else {
-            c.messages.push(message);
-          }
-        }
-      });
-      // rooms[0].messages.push(message);
+      ref.current = message;
+      console.log("Ref from back", ref.current?.channel_id);
+
+      // channels.forEach((c) => {
+      //   if (c.idName === message.channel_id) {
+      //     if (!c.messages) {
+      //       c.messages = [message];
+      //     } else {
+      //       c.messages.push(message);
+      //     }
+      //   }
+      // });
     });
   };
 
