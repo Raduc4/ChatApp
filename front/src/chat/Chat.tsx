@@ -24,7 +24,7 @@ const Chat = () => {
     // this timeout is here because it will re run the function every 100
     // setInterval(() => {
     getRooms();
-    // }, 100);
+    // }, 500);
     configureSockets();
   }, []);
   const configureSockets = () => {
@@ -37,14 +37,18 @@ const Chat = () => {
     });
 
     io.on("channel", (channel) => {
-      let channels = rooms;
-      channels.forEach((c) => {
-        if (c.idName === channel.idName) {
-          c.participants = channel.participants;
-        }
-      });
-      setRooms(channels);
-      console.log(channels);
+      console.log(channel);
+      const channels = rooms;
+
+      getRooms();
+
+      // const match = channels.forEach((c, i, arr) => {
+      //   if (c.idName === channel.idName) {
+      //     c.participants = channel.participants;
+      //   }
+      // });
+      // setRooms(match);
+      // console.log(match);
     });
 
     io.on("message", (message) => {
@@ -60,8 +64,6 @@ const Chat = () => {
         setRooms(channels);
       });
     });
-
-    io.emit("sendMessage", "Mesajul tau");
   };
 
   const handleChannelSelect = (id: string) => {
