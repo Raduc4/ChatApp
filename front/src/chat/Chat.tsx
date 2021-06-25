@@ -4,6 +4,7 @@ import SendMessage from "./SendMessage";
 import { io as socket } from "socket.io-client";
 // import { channels } from "../state/channels";
 import axios from "axios";
+import Channel from "./Channel";
 const SERVER: string = "127.0.0.1:5000";
 const io = socket(SERVER);
 type MessageType = { text: string; senderName: string; channel_id: string };
@@ -43,6 +44,7 @@ const Chat = () => {
     });
     setRooms(updatedChannels);
   }, [ref]);
+
   const configureSockets = () => {
     io.on("connection", () => {
       console.log(`I'm connected with the back-end`);
@@ -59,8 +61,34 @@ const Chat = () => {
     io.on("message", (message) => {
       console.log("message from back", message);
       ref.current = message;
+      // setChannel({ ...item, message };
+      // });
       console.log("Ref from back", ref.current?.channel_id);
 
+      const updatedChannels = rooms.forEach((c): ChannelType => {
+        if (c.idName !== ref.current?.channel_id) {
+          return c;
+        }
+
+        return {
+          idName: c.idName,
+          participants: c.participants,
+          sockets: c.sockets,
+          messages: [...c.messages, message],
+        };
+      });
+
+      // setChannel(updatedChannels);
+
+      // setChannel((current): any => {
+      //   if (current?.idName === ref.current?.channel_id) {
+      //     const curr = current?.messages;
+      //     const updatedObject = Object.assign(curr, ref.current);
+      //     return updatedObject;
+      //   }
+
+      //   // return (current?.messages = [...current.messages, message]);
+      // });
       // channels.forEach((c) => {
       //   if (c.idName === message.channel_id) {
       //     if (!c.messages) {
