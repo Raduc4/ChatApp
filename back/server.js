@@ -8,11 +8,13 @@ const channels = [
     idName: "Simple-Dimple",
     participants: 0,
     sockets: [],
+    messages: [],
   },
   {
     idName: "PopIt",
     participants: 0,
     sockets: [],
+    messages: [],
   },
 ];
 
@@ -60,7 +62,15 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", (message) => {
     io.emit("message", message);
-    console.log(message);
+    // channels.forEach((c) => {
+    //   if (c.idName === message.channel_id) {
+    //     if (!c.messages) {
+    //       c.messages = [message];
+    //     } else {
+    //       c.messages.push(message);
+    //     }
+    //   }
+    // });
   });
 
   socket.on("disconnect", () => {

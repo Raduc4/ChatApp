@@ -40,7 +40,7 @@ const Chat = () => {
 
     io.on("message", (message) => {
       let channels = rooms;
-      console.log("messages", message);
+      console.log("message from back", message);
       channels.forEach((c) => {
         if (c.idName === message.channel_id) {
           if (!c.messages) {
@@ -49,8 +49,8 @@ const Chat = () => {
             c.messages.push(message);
           }
         }
-        setRooms(channels);
       });
+      // rooms[0].messages.push(message);
     });
   };
 

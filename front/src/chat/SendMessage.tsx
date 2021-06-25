@@ -1,4 +1,4 @@
-import React, { useState, useRef, ReactNode } from "react";
+import React, { useState, ReactNode } from "react";
 import Message from "./Message";
 
 type MessageType = { text: string; senderName: string; channel_id: string }[];
