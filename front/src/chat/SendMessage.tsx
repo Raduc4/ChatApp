@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef, ReactNode } from "react";
 import Message from "./Message";
+
+type MessageType = { text: string; senderName: string; channel_id: string }[];
 
 type ChannelType = {
   idName: string;
   participants: number;
   sockets: [];
-  messages: string[];
+  messages: MessageType;
 };
 type Props = {
   channel: ChannelType | undefined;
@@ -15,34 +17,39 @@ type Props = {
 const SendMessage = ({ channel, onSendMessage }: Props) => {
   const [input, setInput] = useState("");
   console.log(input);
+  console.log("messages", channel?.messages);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
-  const sendMessage = () => {
+  const send = () => {
     if (input !== "") {
       onSendMessage(channel?.idName, input);
     }
   };
 
   console.log(channel?.messages);
-  // let list;
-  // if (channel && channel.messages) {
-  //   list = channel.messages.map((message) => (
-  //     <Message senderName={message.senderName} text={message.text} />
-  //   ));
-  // }
+
+  let list: ReactNode = (
+    <div className="no-content-message">There is no messages to show</div>
+  );
+  if (channel && channel.messages) {
+    list = channel.messages.map((m) => (
+      <Message text={m.text} senderName={m.senderName} />
+    ));
+  }
 
   return (
     <div>
+      {list}
       <input
         type="text"
         placeholder="Send message"
         value={input}
         onChange={handleInput}
       />
-      <button onClick={() => sendMessage()}>Send</button>
+      <button onClick={() => send()}>Send</button>
     </div>
   );
 };

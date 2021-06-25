@@ -6,13 +6,14 @@ import { io as socket } from "socket.io-client";
 import axios from "axios";
 const SERVER: string = "127.0.0.1:5000";
 const io = socket(SERVER);
+type MessageType = { text: string; senderName: string; channel_id: string };
 
 type ChannelType = {
   idName: string;
   participants: number;
   sockets: [];
   // [key: string]: unknown;
-  messages: string[];
+  messages: MessageType[];
 };
 
 const Chat = () => {
@@ -21,10 +22,7 @@ const Chat = () => {
   console.log("Firest", rooms);
 
   useEffect(() => {
-    // this timeout is here because it will re run the function every 100
-    // setInterval(() => {
     getRooms();
-    // }, 500);
     configureSockets();
   }, []);
   const configureSockets = () => {
@@ -37,23 +35,13 @@ const Chat = () => {
     });
 
     io.on("channel", (channel) => {
-      console.log(channel);
-      const channels = rooms;
-
       getRooms();
-
-      // const match = channels.forEach((c, i, arr) => {
-      //   if (c.idName === channel.idName) {
-      //     c.participants = channel.participants;
-      //   }
-      // });
-      // setRooms(match);
-      // console.log(match);
     });
 
     io.on("message", (message) => {
       let channels = rooms;
-      rooms.forEach((c) => {
+      console.log("messages", message);
+      channels.forEach((c) => {
         if (c.idName === message.channel_id) {
           if (!c.messages) {
             c.messages = [message];
@@ -71,9 +59,7 @@ const Chat = () => {
     console.log(channel);
 
     setChannel(channel);
-    io.emit("channelJoin", id, async (ack: unknown) => {
-      console.log("Buna ziua");
-    });
+    io.emit("channelJoin", id, async (ack: unknown) => {});
   };
 
   const handleSendMessage = (channel_id: any, text: string) => {
